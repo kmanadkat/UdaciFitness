@@ -1,26 +1,63 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
+import { connect } from 'react-redux';
+import { addEntry } from '../actions';
+import { removeEntry } from '../utils/api';
+import { white } from '../utils/colors';
+import { getDailyReminderValue, timeToString } from '../utils/helpers';
+import MetricCard from './MetricCard';
+import TextButton from './TextButton';
 
 class EntryDetail extends Component {
-  setTitle = (entryId) => {
-    if (!entryId) return;
-    const year = entryId.slice(0, 4)
-    const month = entryId.slice(5, 7)
-    const day = entryId.slice(8)
 
-    this.props.navigation.setOptions({
-        title: `${month}/${day}/${year}`
-    });
-  };
+  reset = () => {
+    const { remove, goBack, entryId } = this.props
+    remove()
+    goBack()
+    removeEntry(entryId)
+  }
+
+  shouldComponentUpdate (nextProps) {
+    return nextProps.metrics !== null && !nextProps.metrics.today
+  }
+
   render() {
-    const {entryId} = this.props.route.params;
-    this.setTitle(entryId);
+    const { metrics } = this.props;
     return (
-      <View>
-        <Text> Entry Detail - {JSON.stringify(entryId)} </Text>
+      <View style={styles.container}>
+        <MetricCard metrics={metrics} />
+        <TextButton onPress={this.reset} style={{margin: 20}}>Reset</TextButton>
       </View>
-    )
+    );
   }
 }
 
-export default EntryDetail
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: white,
+    padding: 15
+  }
+});
+
+function mapStateToProps(entries, { route }) {
+  const { entryId } = route.params;
+  return {
+    metrics: entries[entryId],
+    entryId
+  };
+}
+
+function mapDispatchToProps(dispatch, {route, navigation}) {
+  const {entryId} = route.params;
+  return {
+    remove: () => dispatch(addEntry({
+      [entryId]: timeToString() === entryId
+        ? getDailyReminderValue()
+        : null
+    })),
+    goBack: () => navigation.goBack()
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EntryDetail);

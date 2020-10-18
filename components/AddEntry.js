@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native'
-import {getDailyReminderValue, getMetricMetaInfo, timeToString} from '../utils/helpers'
+import {getDailyReminderValue, getMetricMetaInfo, timeToString, clearLocalNotifications, setLocalNotifications} from '../utils/helpers'
 import DateHeader from './DateHeader'
 import UdaciSlider from './UdaciSlider'
 import UdaciStepper from './UdaciStepper'
@@ -10,6 +10,7 @@ import {submitEntry, removeEntry} from '../utils/api'
 import { connect } from 'react-redux'
 import { addEntry } from '../actions'
 import { purple, white } from '../utils/colors'
+
 
 function SubmitBtn({onPress}) {
   return (
@@ -69,9 +70,10 @@ class AddEntry extends Component {
       sleep: 0,
       eat: 0,
     }))
-    // Navigate to Home
+    this.props.navigation.goBack();
     submitEntry({key, entry})
-    // Clear Local Notification
+    clearLocalNotifications()
+      .then(setLocalNotifications)
   }
 
   reset = () => {
@@ -79,10 +81,10 @@ class AddEntry extends Component {
     this.props.dispatch(addEntry({
       [key]: getDailyReminderValue()
     }))
-    // Route to home
+    this.props.navigation.goBack();
     removeEntry(key)
   }
-
+  
   render() {
     const metaInfo = getMetricMetaInfo();
     if(this.props.alreadyLogged){
