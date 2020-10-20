@@ -15,7 +15,7 @@ import { gray, orange, purple, white } from './utils/colors'
 import {NavigationContainer} from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { clearLocalNotifications, setLocalNotifications } from './utils/helpers'
+import {setLocalNotifications } from './utils/helpers'
 
 
 
@@ -70,8 +70,7 @@ function StackNavigator() {
 export default class App extends Component {
   componentDidMount(){
     // Ensure to clear preset async storage values first
-    // then set notification
-    clearLocalNotifications().then(setLocalNotifications);
+    setLocalNotifications()
   }
   render() {
     return (

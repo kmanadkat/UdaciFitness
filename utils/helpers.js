@@ -170,24 +170,11 @@ export function timeToString (time = Date.now()) {
 
 export function clearLocalNotifications(){
   return AsyncStorage.removeItem(NOTIFICATION_KEY)
-  .then(Notifications.cancelAllScheduledNotificationsAsync());
+  .then(() => {
+    Notifications.cancelAllScheduledNotificationsAsync();
+    console.log("Notification cleared for: ", new Date().toLocaleDateString());
+  });
 }
-
-// function createLocalNotification(){
-//   return {
-//     title: '👋 Log your stats',
-//     body: "Hey! Don't forget to log your stats for today!",
-//     ios: {
-//       sound: true,
-//     },
-//     android: {
-//       sound: true,
-//       priority: 'high',
-//       sticky: false,
-//       vibrate: true,
-//     }
-//   }
-// }
 
 export function setLocalNotifications(){
   AsyncStorage.getItem(NOTIFICATION_KEY)
@@ -201,7 +188,6 @@ export function setLocalNotifications(){
             if(status === 'denied'){
               // TODO: Ask For Notification Permission
             }
-
 
             if(status === 'granted'){
               console.log("Permission Granted");
@@ -218,22 +204,16 @@ export function setLocalNotifications(){
               })
               
               //create a date object to trigger the notification (android)
-              let tomorrow = new Date()
-              // tomorrow = tomorrow.getTime() + (10 * 1000);
-              // const notificationDate = new Date(tomorrow)
-              tomorrow.setDate(tomorrow.getDate());
-              tomorrow.setHours(23);
-              tomorrow.setMinutes(6);
-              console.log(tomorrow.toLocaleString());
+              let tomorrow = new Date()  
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              tomorrow.setHours(10);
+              tomorrow.setMinutes(0);
               Notifications.scheduleNotificationAsync({
                 content: {
                   title: '👋 Log your stats',
                   body: "Hey! Don't forget to log your stats for today!",
                 },
-                trigger : {
-                  time: tomorrow,
-                  repeats: true
-                },
+                trigger : notificationDate
               })
 
               AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
