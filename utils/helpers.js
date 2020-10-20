@@ -173,21 +173,21 @@ export function clearLocalNotifications(){
   .then(Notifications.cancelAllScheduledNotificationsAsync());
 }
 
-function createLocalNotification(){
-  return {
-    title: '👋 Log your stats',
-    body: "Hey! Don't forget to log your stats for today!",
-    ios: {
-      sound: true,
-    },
-    android: {
-      sound: true,
-      priority: 'high',
-      sticky: false,
-      vibrate: true,
-    }
-  }
-}
+// function createLocalNotification(){
+//   return {
+//     title: '👋 Log your stats',
+//     body: "Hey! Don't forget to log your stats for today!",
+//     ios: {
+//       sound: true,
+//     },
+//     android: {
+//       sound: true,
+//       priority: 'high',
+//       sticky: false,
+//       vibrate: true,
+//     }
+//   }
+// }
 
 export function setLocalNotifications(){
   AsyncStorage.getItem(NOTIFICATION_KEY)
@@ -197,12 +197,36 @@ export function setLocalNotifications(){
         Permissions.askAsync(Permissions.NOTIFICATIONS)
           .then(({status}) => {
             if(status === 'granted'){
+              console.log("Permission Granted");
+              //if no notification is set and persmissions granted, make sure and clear any notifications
               Notifications.cancelAllScheduledNotificationsAsync()
+
+              //set up how to handle the notification config
+              Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                  shouldPlaySound: true,
+                  shouldShowAlert: true,
+                  shouldSetBadge: false
+                })
+              })
+              
+              //create a date object to trigger the notification (android)
               let tomorrow = new Date()
               tomorrow.setDate(tomorrow.getDate() + 1);
-              tomorrow.setHours(23);
-              tomorrow.setMinutes(0);
-              Notifications.scheduleNotificationAsync(createLocalNotification(),{time: tomorrow,repeat: 'day'})
+              tomorrow.setHours(9);
+              tomorrow.setMinutes(10);
+
+              Notifications.scheduleNotificationAsync({
+                content: {
+                  title: '👋 Log your stats',
+                  body: "Hey! Don't forget to log your stats for today!",
+                },
+                trigger : {
+                  time: tomorrow,
+                  repeats: true
+                }
+              })
+
               AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
             }
           })

@@ -50,8 +50,8 @@ class Live extends Component {
       const {direction, bounceValue} = this.state;
       if(newDirection !== direction){
         Animated.sequence([
-          Animated.timing(bounceValue, {duration: 200, toValue: 1.04}),
-          Animated.spring(bounceValue, {toValue: 1, friction: 4})
+          Animated.timing(bounceValue, {duration: 200, toValue: 1.04, useNativeDriver: true}),
+          Animated.spring(bounceValue, {toValue: 1, friction: 4, useNativeDriver: true})
         ]).start()
       }
       this.setState(() => ({
