@@ -213,7 +213,7 @@ export function setLocalNotifications(){
                   title: '👋 Log your stats',
                   body: "Hey! Don't forget to log your stats for today!",
                 },
-                trigger : notificationDate
+                trigger : tomorrow
               })
 
               AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
