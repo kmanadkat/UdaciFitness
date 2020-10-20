@@ -193,9 +193,16 @@ export function setLocalNotifications(){
   AsyncStorage.getItem(NOTIFICATION_KEY)
     .then(JSON.parse)
     .then((data) => {
+      console.log("notif key data:", data);
       if(data === null){
         Permissions.askAsync(Permissions.NOTIFICATIONS)
           .then(({status}) => {
+            console.log("permi status: ", status);
+            if(status === 'denied'){
+              // TODO: Ask For Notification Permission
+            }
+
+
             if(status === 'granted'){
               console.log("Permission Granted");
               //if no notification is set and persmissions granted, make sure and clear any notifications
@@ -212,10 +219,12 @@ export function setLocalNotifications(){
               
               //create a date object to trigger the notification (android)
               let tomorrow = new Date()
-              tomorrow.setDate(tomorrow.getDate() + 1);
-              tomorrow.setHours(9);
-              tomorrow.setMinutes(10);
-
+              // tomorrow = tomorrow.getTime() + (10 * 1000);
+              // const notificationDate = new Date(tomorrow)
+              tomorrow.setDate(tomorrow.getDate());
+              tomorrow.setHours(23);
+              tomorrow.setMinutes(6);
+              console.log(tomorrow.toLocaleString());
               Notifications.scheduleNotificationAsync({
                 content: {
                   title: '👋 Log your stats',
@@ -224,7 +233,7 @@ export function setLocalNotifications(){
                 trigger : {
                   time: tomorrow,
                   repeats: true
-                }
+                },
               })
 
               AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
