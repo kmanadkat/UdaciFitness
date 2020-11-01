@@ -27,8 +27,6 @@ You should have `npm`, `node` & `expo-cli` installed in your machine, to confirm
 
 ### Project Screnshots 📱
 
-<p align="center"><img src="#" /></p>
+<p align="center"><img src="./images/group 1.png" /></p>
 
-<p align="center"><img src="#" /></p>
-
-<p align="center"><img src="#" /></p>
+<p align="center"><img src="./images/group 2.png" /></p>
